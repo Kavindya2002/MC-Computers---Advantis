@@ -1,0 +1,251 @@
+<div class="invoice-list-container">
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-title">
+        <h1 class="page-title">Invoice Management</h1>
+        <p class="page-subtitle">Manage and track all customer invoices</p>
+      </div>
+      <div class="header-stats">
+        <div class="stat-card">
+          <div class="stat-value">{{ getTotalInvoices() }}</div>
+          <div class="stat-label">Total Invoices</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value">LKR {{ getTotalRevenue().toFixed(2) }}</div>
+          <div class="stat-label">Total Revenue</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-section">
+    <div class="table-card">
+      <div class="table-header">
+        <h3 class="table-title">Invoice Records</h3>
+        <div class="table-actions">
+          <div class="search-box">
+            <i class="fas fa-search search-icon"></i>
+            <input
+              type="text"
+              class="search-input"
+              placeholder="Search by ID, customer name, or email..."
+              [(ngModel)]="searchTerm"
+              (input)="filterInvoices()">
+          </div>
+          <button class="btn btn-primary" routerLink="/create-invoice">
+            <i class="fas fa-plus"></i>
+            New Invoice
+          </button>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th class="col-invoice">INVOICE NO</th>
+              <th class="col-customer">CUSTOMER</th>
+              <th class="col-date">DATE</th>
+              <th class="col-contact">CONTACT</th>
+              <th class="col-amount">AMOUNT</th>
+              <th class="col-actions">ACTIONS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let invoice of filteredInvoices" class="data-row">
+              <td class="col-invoice">
+                <div class="invoice-number">{{ invoice.invoiceNumber }}</div>
+                <div class="invoice-meta">ID: {{ invoice.id }}</div>
+              </td>
+              <td class="col-customer">
+                <div class="customer-info">
+                  <div class="customer-name">{{ formatCustomerName(invoice.customer.name) }}</div>
+                  <div class="customer-email" *ngIf="invoice.customer.email">
+                    {{ formatEmail(invoice.customer.email) }}
+                  </div>
+                  <div class="customer-address" *ngIf="invoice.customer.address">
+                    {{ formatCustomerName(invoice.customer.address) }}
+                  </div>
+                </div>
+              </td>
+              <td class="col-date">
+                <div class="date-primary">{{ invoice.invoiceDate | date:'dd MMM yyyy' }}</div>
+                <div class="date-secondary">{{ invoice.invoiceDate | date:'hh:mm a' }}</div>
+              </td>
+              <td class="col-contact">
+                <div class="contact-info">{{ invoice.customer.phone }}</div>
+              </td>
+              <td class="col-amount">
+                <div class="amount-primary">LKR {{ invoice.total.toFixed(2) }}</div>
+                <div class="amount-breakdown">
+                  <span class="amount-sub">LKR {{ invoice.subTotal.toFixed(2) }}</span>
+                  <span class="amount-discount" *ngIf="invoice.discount > 0">
+                    -LKR {{ invoice.discount.toFixed(2) }}
+                  </span>
+                </div>
+              </td>
+              <td class="col-actions">
+                <div class="action-buttons">
+                  <button class="btn-action btn-view" (click)="viewInvoice(invoice)" title="View Details">
+                    <i class="fas fa-eye"></i>
+                    <span>View</span>
+                  </button>
+                  <!-- <button class="btn-action btn-download" (click)="downloadPDF(invoice)" title="Download PDF">
+                    <i class="fas fa-download"></i>
+                    <span>PDF</span>
+                  </button> -->
+                  <!-- <button class="btn-action btn-delete" (click)="deleteInvoice(invoice.id)" title="Delete Invoice">
+                    <i class="fas fa-trash"></i>
+                    <span>Delete</span>
+                  </button> -->
+                </div>
+              </td>
+            </tr>
+
+            <tr *ngIf="filteredInvoices.length === 0 && !loading" class="empty-state">
+              <td colspan="6">
+                <div class="empty-content">
+                  <i class="fas fa-file-invoice empty-icon"></i>
+                  <h3 class="empty-title">No Invoices Found</h3>
+                  <p class="empty-description" *ngIf="searchTerm">
+                    No invoices match your search criteria "{{ searchTerm }}".
+                  </p>
+                  <p class="empty-description" *ngIf="!searchTerm">
+                    No invoices found. <a routerLink="/create-invoice">Create your first invoice</a> to get started.
+                  </p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div *ngIf="loading" class="loading-message">
+          <i class="fas fa-spinner fa-spin"></i> Loading invoices...
+        </div>
+
+        <div *ngIf="errorMessage" class="error-message">
+          <i class="fas fa-exclamation-triangle"></i> {{ errorMessage }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Invoice Details Modal -->
+<div *ngIf="showInvoiceModal && selectedInvoice" class="modal-overlay" (click)="closeModal()">
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title-section">
+        <h2 class="modal-title">Invoice Details</h2>
+        <div class="modal-subtitle">{{ selectedInvoice.invoiceNumber }}</div>
+      </div>
+      <button class="btn-close-modal" (click)="closeModal()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="info-grid">
+        <div class="info-section">
+          <h3 class="info-section-title">Invoice Information</h3>
+          <div class="info-content">
+            <div class="info-item">
+              <label>Invoice No:</label>
+              <span class="info-value highlight">{{ selectedInvoice.invoiceNumber }}</span>
+            </div>
+            <div class="info-item">
+              <label>Date:</label>
+              <span class="info-value">{{ selectedInvoice.invoiceDate | date:'fullDate' }}</span>
+            </div>
+            <div class="info-item">
+              <label>Time:</label>
+              <span class="info-value">{{ selectedInvoice.invoiceDate | date:'shortTime' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-section customer-section">
+          <h3 class="info-section-title">Customer Information</h3>
+          <div class="info-content compact">
+            <div class="info-item full-width">
+              <label>Name:</label>
+              <span class="info-value">{{ selectedInvoice.customer.name }}</span>
+            </div>
+            <div class="info-item">
+              <label>Phone:</label>
+              <span class="info-value">{{ selectedInvoice.customer.phone }}</span>
+            </div>
+            <div class="info-item">
+              <label>Email:</label>
+              <span class="info-value">{{ selectedInvoice.customer.email || 'N/A' }}</span>
+            </div>
+            <div class="info-item full-width">
+              <label>Address:</label>
+              <span class="info-value">{{ selectedInvoice.customer.address || 'N/A' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="items-section">
+        <h3 class="section-title">Invoice Items</h3>
+        <table class="items-table">
+          <thead>
+            <tr>
+              <th class="col-item">Item</th>
+              <th class="col-desc">Description</th>
+              <th class="col-qty">Qty</th>
+              <th class="col-price">Unit Price</th>
+              <th class="col-amount">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of selectedInvoice.items">
+              <td class="col-item">
+                <div class="item-name">{{ item.productName }}</div>
+              </td>
+              <td class="col-desc">
+                <div class="item-desc">{{ item.description }}</div>
+              </td>
+              <td class="col-qty">
+                <div class="quantity">{{ item.quantity }}</div>
+              </td>
+              <td class="col-price">
+                <div class="price">LKR {{ item.price.toFixed(2) }}</div>
+              </td>
+              <td class="col-amount">
+                <div class="amount">LKR {{ item.amount.toFixed(2) }}</div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="summary-section">
+        <div class="summary-grid">
+          <div class="summary-item">
+            <span class="summary-label">Subtotal:</span>
+            <span class="summary-value">LKR {{ selectedInvoice.subTotal.toFixed(2) }}</span>
+          </div>
+          <div class="summary-item">
+            <span class="summary-label">Discount:</span>
+            <span class="summary-value discount">-LKR {{ selectedInvoice.discount.toFixed(2) }}</span>
+          </div>
+          <div class="summary-item total">
+            <span class="summary-label">Total Amount:</span>
+            <span class="summary-value total-amount">LKR {{ selectedInvoice.total.toFixed(2) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="closeModal()">
+        <i class="fas fa-times"></i> Close
+      </button>
+      <button class="btn btn-primary" (click)="downloadPDF(selectedInvoice)">
+        <i class="fas fa-download"></i> Download PDF
+      </button>
+    </div>
+  </div>
+</div>
