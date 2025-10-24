@@ -1,0 +1,302 @@
+<div class="invoice-form-container">
+  <div class="page-header">
+    <div class="header-content">
+      <div class="header-title">
+        <h1 class="page-title">Create New Invoice</h1>
+        <p class="page-subtitle">Generate professional invoices for your customers</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-section">
+    <!-- Invoice Creation Form -->
+    <form (ngSubmit)="onSubmit()" #invoiceForm="ngForm" class="form-card">
+      <!-- Customer Details -->
+      <div class="card-section">
+        <div class="section-header">
+          <i class="fas fa-user section-icon"></i>
+          <h3 class="section-title">Customer Details</h3>
+        </div>
+        <div class="section-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="customerName" class="form-label">Customer Name *</label>
+              <input type="text" class="form-control" id="customerName"
+                     [(ngModel)]="invoice.customer.name" name="customerName" required
+                     placeholder="Enter customer full name">
+            </div>
+            <div class="form-group">
+              <label for="customerPhone" class="form-label">Phone Number *</label>
+              <input type="text" class="form-control" id="customerPhone"
+                     [(ngModel)]="invoice.customer.phone" name="customerPhone" required
+                     placeholder="Enter phone number">
+            </div>
+            <div class="form-group">
+              <label for="customerEmail" class="form-label">Email Address</label>
+              <input type="email" class="form-control" id="customerEmail"
+                     [(ngModel)]="invoice.customer.email" name="customerEmail"
+                     placeholder="Enter email address">
+            </div>
+            <div class="form-group full-width">
+              <label for="customerAddress" class="form-label">Delivery Address</label>
+              <input type="text" class="form-control" id="customerAddress"
+                     [(ngModel)]="invoice.customer.address" name="customerAddress"
+                     placeholder="Enter delivery address">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Selection -->
+      <div class="card-section">
+        <div class="section-header">
+          <i class="fas fa-box section-icon"></i>
+          <h3 class="section-title">Product Details</h3>
+        </div>
+        <div class="section-body">
+          <div class="product-selection">
+            <div class="selection-grid">
+              <div class="form-group">
+                <label for="productSelect" class="form-label">Select Product</label>
+                <select class="form-select" id="productSelect"
+                        [(ngModel)]="selectedProductId"
+                        name="productSelect"
+                        [disabled]="isLoading">
+                  <option [value]="0">Choose a product...</option>
+                  <option *ngFor="let product of products" [value]="product.id">
+                    {{ product.name }} - LKR {{ product.price.toFixed(2) }}
+                  </option>
+                </select>
+                <div *ngIf="isLoading" class="loading-indicator">
+                  <i class="fas fa-spinner fa-spin"></i>
+                  <span>Loading products...</span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="quantity" class="form-label">Quantity</label>
+                <input type="number" class="form-control" id="quantity"
+                       [(ngModel)]="selectedQuantity" name="quantity" min="1" value="1">
+              </div>
+              <div class="form-group align-bottom">
+                <button type="button" class="btn-add-product"
+                        (click)="addProduct()"
+                        [disabled]="!selectedProductId || selectedQuantity < 1">
+                  <i class="fas fa-plus"></i>
+                  Add Product
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product List -->
+          <div class="items-table-container" *ngIf="invoice.items.length > 0">
+            <table class="items-table">
+              <thead>
+                <tr>
+                  <th class="col-product">PRODUCT</th>
+                  <th class="col-desc">DESCRIPTION</th>
+                  <th class="col-qty">QTY</th>
+                  <th class="col-price">UNIT PRICE</th>
+                  <th class="col-amount">AMOUNT</th>
+                  <th class="col-actions">ACTIONS</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of invoice.items; let i = index">
+                  <td class="col-product">
+                    <div class="product-name">{{ item.productName }}</div>
+                  </td>
+                  <td class="col-desc">
+                    <div class="product-desc">{{ item.description }}</div>
+                  </td>
+                  <td class="col-qty">
+                    <input type="number" class="quantity-input"
+                           [(ngModel)]="item.quantity"
+                           name="quantity{{i}}"
+                           (change)="updateItemAmount(i)"
+                           min="1">
+                  </td>
+                  <td class="col-price">
+                    <div class="price">LKR {{ item.price.toFixed(2) }}</div>
+                  </td>
+                  <td class="col-amount">
+                    <div class="amount">LKR {{ item.amount.toFixed(2) }}</div>
+                  </td>
+                  <td class="col-actions">
+                    <button type="button" class="btn-remove" (click)="removeItem(i)" title="Remove item">
+                      <i class="fas fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div class="card-section">
+        <div class="section-header">
+          <i class="fas fa-calculator section-icon"></i>
+          <h3 class="section-title">Invoice Summary</h3>
+        </div>
+        <div class="section-body">
+          <div class="summary-container">
+            <div class="summary-box">
+              <div class="summary-item">
+                <span class="summary-label">Subtotal:</span>
+                <span class="summary-value">LKR {{ invoice.subTotal.toFixed(2) }}</span>
+              </div>
+              <div class="summary-item">
+                <span class="summary-label">Discount:</span>
+                <div class="discount-input">
+                  <input type="number" class="form-control"
+                         [(ngModel)]="invoice.discount"
+                         name="discount"
+                         (change)="updateTotal()"
+                         min="0"
+                         [max]="invoice.subTotal"
+                         step="0.01">
+                  <span class="input-symbol">LKR</span>
+                </div>
+              </div>
+              <div class="summary-item total">
+                <span class="summary-label">Total Amount:</span>
+                <span class="summary-value total-amount">LKR {{ invoice.total.toFixed(2) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" (click)="resetForm()">
+          <i class="fas fa-redo"></i>
+          Reset Form
+        </button>
+        <!-- <button type="submit" class="btn btn-primary"
+                [disabled]="!invoiceForm.form.valid || invoice.items.length === 0 || isLoading">
+          <i class="fas fa-file-invoice" *ngIf="!isLoading"></i>
+          <i class="fas fa-spinner fa-spin" *ngIf="isLoading"></i>
+          {{ isLoading ? 'Creating Invoice...' : 'Generate Invoice' }}
+        </button> -->
+        <button type="button" class="btn btn-info" (click)="showInvoicePreview()"
+                [disabled]="!invoiceForm.form.valid || invoice.items.length === 0">
+          <i class="fas fa-eye"></i>
+          Preview Invoice
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Invoice Preview Modal -->
+  <div class="modal-overlay" *ngIf="showPreview">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h2 class="modal-title">Invoice Preview</h2>
+        <button class="btn-close" (click)="closePreview()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Invoice Content -->
+        <div class="invoice-preview">
+          <!-- Header -->
+          <div class="invoice-header">
+            <div class="company-info">
+              <h3>MC Computers</h3>
+              <p>123 Tech Avenue, Colombo 07</p>
+              <p>Sri Lanka</p>
+              <p>+94 11 234 5678 | info&#64;mcccomputers.lk</p>
+            </div>
+            <div class="invoice-title">
+              <h1>INVOICE</h1>
+              <div class="invoice-details">
+                <p><strong>Invoice No:</strong> {{ invoice.invoiceNumber }}</p>
+                <p><strong>Date:</strong> {{ invoice.invoiceDate | date:'mediumDate' }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Customer Info -->
+          <div class="customer-section">
+            <div class="billed-to">
+              <h4>Bill To:</h4>
+              <p><strong>{{ invoice.customer.name }}</strong></p>
+              <p *ngIf="invoice.customer.phone">{{ invoice.customer.phone }}</p>
+              <p *ngIf="invoice.customer.email">{{ invoice.customer.email }}</p>
+              <p *ngIf="invoice.customer.address">{{ invoice.customer.address }}</p>
+            </div>
+          </div>
+
+          <!-- Items Table -->
+          <div class="items-section">
+            <table class="preview-table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Description</th>
+                  <th class="text-center">Qty</th>
+                  <th class="text-right">Unit Price</th>
+                  <th class="text-right">Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of invoice.items">
+                  <td>{{ item.productName }}</td>
+                  <td>{{ item.description }}</td>
+                  <td class="text-center">{{ item.quantity }}</td>
+                  <td class="text-right">LKR {{ item.price.toFixed(2) }}</td>
+                  <td class="text-right">LKR {{ item.amount.toFixed(2) }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Totals -->
+          <div class="totals-section">
+            <div class="totals-grid">
+              <div class="total-item">
+                <span>Subtotal:</span>
+                <span>LKR {{ invoice.subTotal.toFixed(2) }}</span>
+              </div>
+              <div class="total-item" *ngIf="invoice.discount > 0">
+                <span>Discount:</span>
+                <span class="discount">-LKR {{ invoice.discount.toFixed(2) }}</span>
+              </div>
+              <div class="total-item grand-total">
+                <span><strong>Total Amount:</strong></span>
+                <span><strong>LKR {{ invoice.total.toFixed(2) }}</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div class="terms">
+            <h5>Terms & Conditions</h5>
+            <p>• All defective parts will be repaired within 14 days upon warranty claim submission.</p>
+            <p>• Warranty does not cover chip burns, physical damage, corrosion, misuse, negligence, or software issues.</p>
+            <p>• Please keep this invoice safe; it is required for all warranty claims and service requests.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn btn-secondary" (click)="closePreview()">
+          <i class="fas fa-arrow-left"></i>
+          Back to Form
+        </button>
+        <button class="btn btn-primary" (click)="downloadCurrentInvoicePDF()">
+          <i class="fas fa-download"></i>
+          Download PDF
+        </button>
+        <button class="btn btn-success" (click)="onSubmit()" [disabled]="isLoading">
+          <i class="fas fa-check"></i>
+          Save Invoice
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
