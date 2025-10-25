@@ -1,12 +1,11 @@
 # 💻 MC Computers - Invoice Management System
 
 This project is an **Invoice Management System** developed for **MC Computers**, a retail shop that sells computer parts and accessories.  
-It helps manage invoices, customer details, and billing processes efficiently.
 
 ---
 
 ## 🚀 Tech Stack
-- **Backend:** ASP.NET Core Web API  
+- **Backend:** ASP.NET / C#
 - **Frontend:** Angular  
 - **Database:** Microsoft SQL Server  
 
