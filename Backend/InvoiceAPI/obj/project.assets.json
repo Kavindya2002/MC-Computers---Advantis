@@ -5537,24 +5537,31 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\himan\\.nuget\\packages\\": {}
+    "C:\\Users\\LENOVO\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\himan\\OneDrive\\Desktop\\InvoiceSystem\\Backend\\InvoiceAPI\\InvoiceAPI.csproj",
+      "projectUniqueName": "C:\\Users\\LENOVO\\Desktop\\MC Computers\\InvoiceSystem\\Backend\\InvoiceAPI\\InvoiceAPI.csproj",
       "projectName": "InvoiceAPI",
-      "projectPath": "C:\\Users\\himan\\OneDrive\\Desktop\\InvoiceSystem\\Backend\\InvoiceAPI\\InvoiceAPI.csproj",
-      "packagesPath": "C:\\Users\\himan\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\himan\\OneDrive\\Desktop\\InvoiceSystem\\Backend\\InvoiceAPI\\obj\\",
+      "projectPath": "C:\\Users\\LENOVO\\Desktop\\MC Computers\\InvoiceSystem\\Backend\\InvoiceAPI\\InvoiceAPI.csproj",
+      "packagesPath": "C:\\Users\\LENOVO\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\LENOVO\\Desktop\\MC Computers\\InvoiceSystem\\Backend\\InvoiceAPI\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\himan\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        "C:\\Users\\LENOVO\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
