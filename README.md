@@ -12,7 +12,6 @@ This project is an **Invoice Management System** developed for **MC Computers**,
 ---
 
 ## ⚙️ Features
-- Create and manage invoices  
 - Generate Invoices  
 - Store and retrieve data securely  
 - Test and explore APIs using **Swagger UI**
