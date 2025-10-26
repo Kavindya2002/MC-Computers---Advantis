@@ -5543,11 +5543,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\LENOVO\\Desktop\\MC Computers\\InvoiceSystem\\Backend\\InvoiceAPI\\InvoiceAPI.csproj",
+      "projectUniqueName": "C:\\Users\\LENOVO\\Desktop\\MC Computers\\Backend and Frontend\\Backend\\InvoiceAPI\\InvoiceAPI.csproj",
       "projectName": "InvoiceAPI",
-      "projectPath": "C:\\Users\\LENOVO\\Desktop\\MC Computers\\InvoiceSystem\\Backend\\InvoiceAPI\\InvoiceAPI.csproj",
+      "projectPath": "C:\\Users\\LENOVO\\Desktop\\MC Computers\\Backend and Frontend\\Backend\\InvoiceAPI\\InvoiceAPI.csproj",
       "packagesPath": "C:\\Users\\LENOVO\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\LENOVO\\Desktop\\MC Computers\\InvoiceSystem\\Backend\\InvoiceAPI\\obj\\",
+      "outputPath": "C:\\Users\\LENOVO\\Desktop\\MC Computers\\Backend and Frontend\\Backend\\InvoiceAPI\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

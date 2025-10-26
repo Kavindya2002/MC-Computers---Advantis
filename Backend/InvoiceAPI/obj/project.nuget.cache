@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "3HQA5SBzuaQ=",
+  "dgSpecHash": "M/Ziyy6kQ+Y=",
   "success": true,
-  "projectFilePath": "C:\\Users\\LENOVO\\Desktop\\MC Computers\\InvoiceSystem\\Backend\\InvoiceAPI\\InvoiceAPI.csproj",
+  "projectFilePath": "C:\\Users\\LENOVO\\Desktop\\MC Computers\\Backend and Frontend\\Backend\\InvoiceAPI\\InvoiceAPI.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\LENOVO\\.nuget\\packages\\azure.core\\1.38.0\\azure.core.1.38.0.nupkg.sha512",
     "C:\\Users\\LENOVO\\.nuget\\packages\\azure.identity\\1.11.4\\azure.identity.1.11.4.nupkg.sha512",
